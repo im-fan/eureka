@@ -11,6 +11,7 @@ import static com.netflix.discovery.util.EurekaEntityFunctions.countInstances;
 /**
  * A tool for running diagnostic tasks against a discovery server. Currently limited to observing
  * of consistency of delta updates.
+ * 针对发现服务器运行诊断任务的工具。目前仅限于观察增量更新的一致性
  *
  * @author Tomasz Bak
  */

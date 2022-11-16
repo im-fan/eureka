@@ -67,7 +67,7 @@ public class PeerEurekaNodes {
     public List<PeerEurekaNode> getPeerEurekaNodes() {
         return peerEurekaNodes;
     }
-    
+
     public int getMinNumberOfAvailablePeers() {
         return serverConfig.getHealthStatusMinNumberOfAvailablePeers();
     }
@@ -148,6 +148,7 @@ public class PeerEurekaNodes {
      * Given new set of replica URLs, destroy {@link PeerEurekaNode}s no longer available, and
      * create new ones.
      *
+     * 给定新的副本url集，销毁{@link PeerEurekaNode}不再可用，并创建新的副本url。
      * @param newPeerUrls peer node URLs; this collection should have local node's URL filtered out
      */
     protected void updatePeerEurekaNodes(List<String> newPeerUrls) {
@@ -238,7 +239,7 @@ public class PeerEurekaNodes {
         }
         return isInstanceURL(url, applicationInfoManager.getInfo());
     }
-    
+
     /**
      * Checks if the given service url matches the supplied instance
      *

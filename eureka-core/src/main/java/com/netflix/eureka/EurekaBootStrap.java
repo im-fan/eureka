@@ -82,7 +82,7 @@ public class EurekaBootStrap implements ServletContextListener {
 
     protected volatile EurekaServerContext serverContext;
     protected volatile AwsBinder awsBinder;
-    
+
     private EurekaClient eurekaClient;
 
     /**
@@ -91,10 +91,10 @@ public class EurekaBootStrap implements ServletContextListener {
     public EurekaBootStrap() {
         this(null);
     }
-    
+
     /**
      * Construct an instance of eureka bootstrap with the supplied eureka client
-     * 
+     *
      * @param eurekaClient the eureka client to bootstrap
      */
     public EurekaBootStrap(EurekaClient eurekaClient) {
@@ -103,16 +103,19 @@ public class EurekaBootStrap implements ServletContextListener {
 
     /**
      * Initializes Eureka, including syncing up with other Eureka peers and publishing the registry.
-     *
+     * 初始化Eureka，包括与其他Eureka对等点同步节点和发布注册表。
      * @see
      * javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
      */
     @Override
     public void contextInitialized(ServletContextEvent event) {
         try {
+            //初始化eureka环境变量
             initEurekaEnvironment();
+            //初始化eureka服务上下文
             initEurekaServerContext();
 
+            //获取servlet上下文,并将eureka设置到上下文中
             ServletContext sc = event.getServletContext();
             sc.setAttribute(EurekaServerContext.class.getName(), serverContext);
         } catch (Throwable e) {
@@ -127,7 +130,10 @@ public class EurekaBootStrap implements ServletContextListener {
     protected void initEurekaEnvironment() throws Exception {
         logger.info("Setting the eureka configuration..");
 
+        //初始化eureka数据配置中心
         String dataCenter = ConfigurationManager.getConfigInstance().getString(EUREKA_DATACENTER);
+
+        //设置Archaius部署数据中心
         if (dataCenter == null) {
             logger.info("Eureka data center value eureka.datacenter is not set, defaulting to default");
             ConfigurationManager.getConfigInstance().setProperty(ARCHAIUS_DEPLOYMENT_DATACENTER, DEFAULT);
@@ -143,11 +149,13 @@ public class EurekaBootStrap implements ServletContextListener {
 
     /**
      * init hook for server context. Override for custom logic.
+     *
+     * 服务器上下文的Init钩子。覆盖自定义逻辑。
      */
     protected void initEurekaServerContext() throws Exception {
         EurekaServerConfig eurekaServerConfig = new DefaultEurekaServerConfig();
 
-        // For backward compatibility
+        // For backward compatibility 向后兼容逻辑
         JsonXStream.getInstance().registerConverter(new V1AwareInstanceInfoConverter(), XStream.PRIORITY_VERY_HIGH);
         XmlXStream.getInstance().registerConverter(new V1AwareInstanceInfoConverter(), XStream.PRIORITY_VERY_HIGH);
 
@@ -161,10 +169,10 @@ public class EurekaBootStrap implements ServletContextListener {
             EurekaInstanceConfig instanceConfig = isCloud(ConfigurationManager.getDeploymentContext())
                     ? new CloudInstanceConfig()
                     : new MyDataCenterInstanceConfig();
-            
+
             applicationInfoManager = new ApplicationInfoManager(
                     instanceConfig, new EurekaConfigBasedInstanceInfoProvider(instanceConfig).get());
-            
+
             EurekaClientConfig eurekaClientConfig = new DefaultEurekaClientConfig();
             eurekaClient = new DiscoveryClient(applicationInfoManager, eurekaClientConfig);
         } else {
@@ -218,7 +226,7 @@ public class EurekaBootStrap implements ServletContextListener {
         // Register all monitoring statistics.
         EurekaMonitors.registerAllStats();
     }
-    
+
     protected PeerEurekaNodes getPeerEurekaNodes(PeerAwareInstanceRegistry registry, EurekaServerConfig eurekaServerConfig, EurekaClientConfig eurekaClientConfig, ServerCodecs serverCodecs, ApplicationInfoManager applicationInfoManager) {
         PeerEurekaNodes peerEurekaNodes = new PeerEurekaNodes(
                 registry,
@@ -227,7 +235,7 @@ public class EurekaBootStrap implements ServletContextListener {
                 serverCodecs,
                 applicationInfoManager
         );
-        
+
         return peerEurekaNodes;
     }
 

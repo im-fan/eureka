@@ -108,6 +108,12 @@ import com.netflix.servo.monitor.Stopwatch;
  * {@link java.net.URL}s specified in the list in the case of failure.
  * </p>
  *
+ * 用于与Eureka Server交互的类。
+ * Eureka Client负责a)向Eureka Server注册实例b)向Eureka Server更新租约c)在关闭期间从Eureka Server取消租约
+ * d)查询在Eureka Server上注册的服务/实例列表
+ *
+ * Eureka Client需要一个已配置的Eureka Server java.net.url列表来进行会话。这些java.net.url通常是amazon的弹性eip，不会改变。在发生故障的情况下，上面定义的所有函数将故障转移到列表中指定的其他java.net.url。
+ *
  * @author Karthik Ranganathan, Greg Kim
  * @author Spencer Gibb
  *
@@ -141,6 +147,10 @@ public class DiscoveryClient implements EurekaClient {
      * A scheduler to be used for the following 3 tasks:
      * - updating service urls
      * - scheduling a TimedSuperVisorTask
+     *
+     * 用于以下3个任务的调度器:
+     * -更新服务url
+     * -调度TimedSuperVisorTask
      */
     private final ScheduledExecutorService scheduler;
     // additional executors for supervised subtasks
@@ -319,7 +329,7 @@ public class DiscoveryClient implements EurekaClient {
                     Provider<BackupRegistry> backupRegistryProvider) {
         this(applicationInfoManager, config, args, backupRegistryProvider, ResolverUtils::randomize);
     }
-    
+
     @Inject
     DiscoveryClient(ApplicationInfoManager applicationInfoManager, EurekaClientConfig config, AbstractDiscoveryClientOptionalArgs args,
                     Provider<BackupRegistry> backupRegistryProvider, EndpointRandomizer endpointRandomizer) {
@@ -333,7 +343,7 @@ public class DiscoveryClient implements EurekaClient {
             this.healthCheckHandlerProvider = null;
             this.preRegistrationHandler = null;
         }
-        
+
         this.applicationInfoManager = applicationInfoManager;
         InstanceInfo myInfo = applicationInfoManager.getInfo();
 
@@ -496,7 +506,7 @@ public class DiscoveryClient implements EurekaClient {
     private void scheduleServerEndpointTask(EurekaTransport eurekaTransport,
                                             AbstractDiscoveryClientOptionalArgs args) {
 
-            
+
         Collection<?> additionalFilters = args == null
                 ? Collections.emptyList()
                 : args.additionalFilters;
@@ -504,18 +514,18 @@ public class DiscoveryClient implements EurekaClient {
         EurekaJerseyClient providedJerseyClient = args == null
                 ? null
                 : args.eurekaJerseyClient;
-        
+
         TransportClientFactories argsTransportClientFactories = null;
         if (args != null && args.getTransportClientFactories() != null) {
             argsTransportClientFactories = args.getTransportClientFactories();
         }
-        
+
         // Ignore the raw types warnings since the client filter interface changed between jersey 1/2
         @SuppressWarnings("rawtypes")
         TransportClientFactories transportClientFactories = argsTransportClientFactories == null
                 ? new Jersey1TransportClientFactories()
                 : argsTransportClientFactories;
-                
+
         Optional<SSLContext> sslContext = args == null
                 ? Optional.empty()
                 : args.getSSLContext();

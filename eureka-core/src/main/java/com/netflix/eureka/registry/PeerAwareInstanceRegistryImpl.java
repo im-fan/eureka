@@ -186,6 +186,8 @@ public class PeerAwareInstanceRegistryImpl extends AbstractInstanceRegistry impl
      * The renewal threshold would be used to determine if the renewals drop
      * dramatically because of network partition and to protect expiring too
      * many instances at a time.
+     * 计划定时更新<em>更新阈值<em>的任务。
+     * 更新阈值将用于确定是否由于网络分区而导致更新数量急剧下降，并保护一次过期的实例过多。
      *
      */
     private void scheduleRenewalThresholdUpdateTask() {
@@ -202,15 +204,19 @@ public class PeerAwareInstanceRegistryImpl extends AbstractInstanceRegistry impl
      * Populates the registry information from a peer eureka node. This
      * operation fails over to other nodes until the list is exhausted if the
      * communication fails.
+     *
+     * 从对等eureka节点填充注册表信息。如果通信失败，此操作将故障转移到其他节点，直到列表耗尽。
      */
     @Override
     public int syncUp() {
         // Copy entire entry from neighboring DS node
         int count = 0;
 
+        //默认5次
         for (int i = 0; ((i < serverConfig.getRegistrySyncRetries()) && (count == 0)); i++) {
             if (i > 0) {
                 try {
+                    //默认30s
                     Thread.sleep(serverConfig.getRegistrySyncRetryWaitMs());
                 } catch (InterruptedException e) {
                     logger.warn("Interrupted during registry transfer..");

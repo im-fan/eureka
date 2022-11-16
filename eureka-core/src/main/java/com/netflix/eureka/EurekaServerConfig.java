@@ -298,7 +298,7 @@ public interface EurekaServerConfig {
     /**
      * Gets the time for which the registry payload should be kept in the cache
      * if it is not invalidated by change events.
-     *
+     * 获取注册表有效负载在未因更改事件而失效时应保存在缓存中的时间。
      * @return time in seconds.
      */
     long getResponseCacheAutoExpirationInSeconds();

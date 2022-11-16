@@ -40,16 +40,24 @@ import com.netflix.servo.monitor.Monitors;
  *
  */
 public enum EurekaMonitors {
+    //自启动以来的总更新数
     RENEW("renewCounter", "Number of total renews seen since startup"),
+    //自启动以来的取消总数
     CANCEL("cancelCounter", "Number of total cancels seen since startup"),
+    //自启动以来看到的注册表查询总数
     GET_ALL_CACHE_MISS("getAllCacheMissCounter", "Number of total registry queries seen since startup"),
+    //自启动以来看到的delta的注册表查询总数
     GET_ALL_CACHE_MISS_DELTA("getAllCacheMissDeltaCounter",
             "Number of total registry queries for delta seen since startup"),
+    //自启动以来看到的包含远程区域查询的注册中心总数
     GET_ALL_WITH_REMOTE_REGIONS_CACHE_MISS("getAllWithRemoteRegionCacheMissCounter",
             "Number of total registry with remote region queries seen since startup"),
+    //自启动以来看到的对远程区域的delta的总注册表查询数
     GET_ALL_WITH_REMOTE_REGIONS_CACHE_MISS_DELTA("getAllWithRemoteRegionCacheMissDeltaCounter",
             "Number of total registry queries for delta with remote region seen since startup"),
+    //自启动以来的总增量数
     GET_ALL_DELTA("getAllDeltaCounter", "Number of total deltas since startup"),
+    //自启动以来与远程区域的总增量数
     GET_ALL_DELTA_WITH_REMOTE_REGIONS("getAllDeltaWithRemoteRegionCounter",
             "Number of total deltas with remote regions since startup"),
     GET_ALL("getAllCounter", "Number of total registry queries seen since startup"),
